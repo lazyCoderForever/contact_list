@@ -1,30 +1,59 @@
 <template>
   <div class="contactForm-wraper">
-    <button v-if="!change" class="contactForm_add-field" v-on:click="openForm">
-      Добавить поле
-    </button>
     <form class="contactForm">
-      <button
-        type="button"
-        class="change-contact-data"
-        v-if="!change"
-        v-on:click="allowChangeData"
-      ></button>
+      <div v-if="change !== 'edit'" class="contactForm_options">
+        <button
+          type="button"
+          class="contactForm_options_view"
+          data-form_option="static"
+          v-on:click="allowChangeData"
+        ></button>
+        <button
+          type="button"
+          class=" contactForm_options_add-field"
+          v-if="change === 'static'"
+          v-on:click="openAddFieldForm"
+        ></button>
+        <button
+          type="button"
+          class=" contactForm_options_edit-field"
+          data-form_option="edit"
+          v-if="change !== 'edit'"
+          v-on:click="allowChangeData"
+        ></button>
+        <button
+          type="button"
+          class=" contactForm_options_del-field"
+          data-form_option="del"
+          v-if="change !== 'del'"
+          v-on:click="allowChangeData"
+        ></button>
+      </div>
+
       <div
         v-for="(field, name, index) in sortedContactData"
         :key="index"
         v-bind:class="{
-          contactForm_static: !change,
-          contactForm_active: change,
+          contactForm_static: change === 'static',
+          contactForm_edit: change === 'edit',
+          contactForm_del: change === 'del',
         }"
       >
         <label class="contactForm_inputlabel" :for="index">{{
           `${Object.keys(field)[0]}:`
         }}</label>
-        <div v-if="!change" class="contactForm_info">
+        <div v-if="change === 'static'" class="contactForm_info">
           {{ field[Object.keys(field)[0]] }}
         </div>
-        <div v-if="change" class="contactForm_inputField-wraper">
+        <div v-if="change === 'del'" class="contactForm_del-info">
+          {{ field[Object.keys(field)[0]] }}
+          <span
+            class="contactForm_deleteField minus"
+            :data-name_field="Object.keys(field)[0]"
+            v-on:click="deleteField"
+          ></span>
+        </div>
+        <div v-if="change === 'edit'" class="contactForm_inputField-wraper">
           <input
             class="contactForm_inputField"
             type="text"
@@ -33,16 +62,12 @@
             :data-name_field="Object.keys(field)[0]"
             v-on:input="changeFieldValue"
           />
-          <span
-            class="contactForm_deleteField minus"
-            v-on:click="deleteField"
-          ></span>
         </div>
       </div>
-      <div class="contactForm_active_options" v-if="change">
+      <div class="contactForm_edit_options" v-if="change === 'edit'">
         <button
           type="button"
-          class="contactForm_active_options-btn"
+          class="contactForm_edit_options-btn"
           data-set="cancel"
           v-on:click="setNewContactData"
         >
@@ -50,18 +75,23 @@
         </button>
         <button
           type="button"
-          class="contactForm_active_options-btn"
+          class="contactForm_edit_options-btn"
           data-set="save"
           v-on:click="setNewContactData"
         >
           Save
         </button>
       </div>
-      <ConfirmPopUp :confirm="confirm" :withField="fieldToDelete" />
+      <AddFieldForm :contactId="contactId" :contactData="contactData" />
+      <ConfirmPopUp
+        :confirm="confirm"
+        :withField="fieldToDelete"
+        additionalClass="contact-confirm-del"
+      />
       <ConfirmPopUp
         :confirm="confirmСancellation"
         popUpText="Undo editing ?"
-        additionalClass="change-contact-confirm"
+        additionalClass="contact-confirm-change"
       />
     </form>
   </div>
@@ -70,8 +100,9 @@
 <script>
 import { toggleForm } from "@/assets/js/toggleForm";
 import ConfirmPopUp from "@/components/ConfirmPopUp.vue";
+import AddFieldForm from "@/components/Forms/AddFieldForm.vue";
 export default {
-  components: { ConfirmPopUp },
+  components: { ConfirmPopUp, AddFieldForm },
   name: "EditingForm",
   props: {
     contactData: Object,
@@ -86,7 +117,7 @@ export default {
         fielValue: "",
       },
       fieldToDelete: "",
-      change: false,
+      change: "static",
     };
   },
   computed: {
@@ -114,12 +145,12 @@ export default {
 
   methods: {
     confirmСancellation(e) {
-      const confirmForm = document.querySelector(".change-contact-confirm");
+      const confirmForm = document.querySelector(".contact-confirm-change");
       const Form = toggleForm(confirmForm);
       if (e.target.dataset.conf_value === "yes") {
         Form.close();
         this.changedContactData = {};
-        this.change = !this.change;
+        this.change = "static";
       } else {
         Form.close();
       }
@@ -133,10 +164,10 @@ export default {
           changedContactData: this.changedContactData,
         });
         this.changedContactData = {};
-        this.change = !this.change;
+        this.change = "static";
       } else {
         const confirmСancellationForm = document.querySelector(
-          ".change-contact-confirm"
+          ".contact-confirm-change"
         );
         const Form = toggleForm(confirmСancellationForm);
         Form.open("contain");
@@ -148,28 +179,29 @@ export default {
       const activeFieldValue = activeField.value;
       this.changedContactData[activeFieldName] = activeFieldValue;
     },
-    allowChangeData() {
+    allowChangeData(e) {
+      const optionType = e.target.dataset.form_option;
+
       //      this.$store.commit("SAVE_PREV_DATA", {
       //   contactId: this.contactId,
       //   prevData: this.contactData,
       // });
-      this.change = !this.change;
+      this.change = optionType;
     },
-    openForm() {
+    openAddFieldForm() {
       const addFieldForm = document.querySelector(".addFieldForm");
-      const windowWidth = Number(window.innerWidth) / 2 - 161;
-      addFieldForm.style.left = `${windowWidth}px`;
+      addFieldForm.style.left = `-20%`;
     },
     deleteField(e) {
-      const confirmForm = document.querySelector(".confirm_popUp_wraper");
+      const confirmForm = document.querySelector(".contact-confirm-del");
       const Form = toggleForm(confirmForm);
-      let nameField = e.target.previousSibling.dataset.name_field;
+      let nameField = e.target.dataset.name_field;
 
       this.fieldToDelete = nameField;
       Form.open("contain");
     },
     confirm(e) {
-      const confirmForm = document.querySelector(".confirm_popUp_wraper");
+      const confirmForm = document.querySelector(".contact-confirm-del");
       const Form = toggleForm(confirmForm);
       if (e.target.dataset.conf_value === "yes") {
         this.$store.commit("DEL_FIELD", {
@@ -188,21 +220,11 @@ export default {
 <style scoped lang="scss">
 .contactForm-wraper {
   margin: 30px auto;
-  .change-contact-confirm {
+  .contact-confirm-change {
     display: flex;
     align-items: center;
   }
-  .change-contact-data {
-    width: 30px;
-    height: 30px;
-    border: none;
-    background-image: url("../../assets/img/pen.png");
-    background-size: cover;
-    background-position: center center;
-    background-repeat: no-repeat;
-    background-color: transparent;
-    cursor: pointer;
-  }
+
   .contactForm {
     position: relative;
     display: flex;
@@ -213,7 +235,93 @@ export default {
     margin: 20px auto;
     box-shadow: 0px 0px 20px 0px rgba(133, 133, 133, 1);
     border-radius: 20px;
-    &_active {
+    &_del {
+      &-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+    }
+    &_deleteField {
+      position: relative;
+      display: block;
+      width: 20px;
+      height: 20px;
+      margin: 0 15px;
+      border: 1px solid #33cccc;
+      border-radius: 30px;
+      background-color: transparent;
+      cursor: pointer;
+      &::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        top: 45%;
+        width: 50%;
+        height: 2px;
+        margin-left: -4px;
+        background-color: #33cccc;
+      }
+    }
+    &_options {
+      &_view,
+      &_edit-field,
+      &_del-field,
+      &_add-field {
+        width: 30px;
+        height: 30px;
+        margin: 0 15px;
+        border: none;
+        background-size: cover;
+        background-position: center center;
+        background-repeat: no-repeat;
+        background-color: transparent;
+        cursor: pointer;
+      }
+      &_view {
+        background-image: url("../../assets/img/eye.png");
+      }
+      &_edit-field {
+        background-image: url("../../assets/img/pen.png");
+      }
+      &_del-field {
+        background-image: url("../../assets/img/trash-can.png");
+      }
+      &_add-field {
+        background-image: url("../../assets/img/plus.png");
+      }
+    }
+    &_del {
+      width: 400px;
+      display: grid;
+      grid-template-columns: 100px -webkit-max-content;
+      grid-template-columns: 100px max-content;
+      align-items: center;
+      margin: 15px auto;
+      &_options {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        margin: 15px auto;
+        &-btn {
+          margin: 0 50px;
+          padding: 10px 50px;
+          background: #1d7373;
+          border: 1px solid transparent;
+          border-radius: 25px;
+          color: white;
+          font-size: 18px;
+          cursor: pointer;
+          transition: 0.3s;
+          &:hover {
+            background: transparent;
+            border: 1px solid #1d7373;
+            color: black;
+          }
+        }
+      }
+    }
+    &_edit {
       display: flex;
       flex-direction: column;
       align-items: flex-start;
@@ -242,36 +350,23 @@ export default {
       }
     }
     &_static {
-      width: 400px;
+      width: 600px;
       display: grid;
-      grid-template-columns: 100px max-content;
+      grid-template-columns: 200px max-content;
       align-items: center;
       margin: 15px auto;
     }
     &_info {
       text-align: left;
     }
-    &_add-field {
-      padding: 15px 20px;
-      border-radius: 15px;
-      background-color: transparent;
-      border: 1px solid #1d7373;
-      color: black;
-      font-size: 20px;
-      cursor: pointer;
-      transition: 0.3s;
-      &:hover {
-        color: white;
-        background-color: #33cccc;
-        border: 1px solid transparent;
-      }
-    }
+
     &_inputlabel {
       margin: 10px 0;
       font-size: 18px;
       font-weight: 500;
       text-align: left;
       color: black;
+      overflow: hidden;
     }
     &_inputField {
       max-width: 100%;
@@ -288,27 +383,6 @@ export default {
         display: flex;
         justify-content: space-around;
         align-items: center;
-      }
-    }
-    &_deleteField {
-      position: relative;
-      display: block;
-      width: 20px;
-      height: 20px;
-      margin: 0 15px;
-      border: 1px solid #33cccc;
-      border-radius: 30px;
-      background-color: transparent;
-      cursor: pointer;
-      &::after {
-        content: "";
-        position: absolute;
-        left: 50%;
-        top: 45%;
-        width: 50%;
-        height: 2px;
-        margin-left: -4px;
-        background-color: #33cccc;
       }
     }
   }
