@@ -111,6 +111,7 @@ export default {
       return sortedKeys;
     },
   },
+
   methods: {
     confirmСancellation(e) {
       const confirmForm = document.querySelector(".change-contact-confirm");
@@ -148,6 +149,10 @@ export default {
       this.changedContactData[activeFieldName] = activeFieldValue;
     },
     allowChangeData() {
+      //      this.$store.commit("SAVE_PREV_DATA", {
+      //   contactId: this.contactId,
+      //   prevData: this.contactData,
+      // });
       this.change = !this.change;
     },
     openForm() {
