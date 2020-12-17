@@ -1,27 +1,13 @@
 <template>
   <div class="addContactForm-wraper">
-    <div class="confirm_popUp_wraper">
-      <div class="confirm_popUp">
-        <p>Are you sure?</p>
-        <div class="confirm_popUp-buttons">
-          <button
-            class="confirm_popUp-btn"
-            data-conf_value="yes"
-            v-on:click="confirm"
-          >
-            Yes
-          </button>
-          <button
-            class="confirm_popUp-btn"
-            data-conf_value="no"
-            v-on:click="confirm"
-          >
-            No
-          </button>
-        </div>
-      </div>
-    </div>
     <form class="addContactForm" v-on:submit.prevent="onSubmit">
+      <div class="form_close">
+        <button
+          type="button"
+          class="form_close-btn"
+          v-on:click="closeForm"
+        ></button>
+      </div>
       <div class="addContactForm_fields-wraper">
         <label class="addContactForm_inputlabel" for="name">Name</label>
         <input
@@ -39,7 +25,7 @@
           type="text"
           id="last_name"
           placeholder="Efimia"
-          v-model="lastName"
+          v-model="surname"
         />
         <label class="addContactForm_inputlabel" for="phone">Phone</label>
         <input
@@ -65,93 +51,58 @@
 
 <script>
 export default {
-  name: 'AddContactForm',
+  name: "AddContactForm",
   data: () => {
     return {
-      name: '',
-      lastName: '',
-      phone: '',
-      email: '',
-    }
+      name: "",
+      surname: "",
+      phone: "",
+      email: "",
+    };
   },
   methods: {
     onSubmit() {
-      const foo = document.querySelector('.confirm_popUp_wraper')
-      foo.style.top = '0'
-      foo.style.width = '100%'
-      foo.style.height = '100vh'
+      this.$store.commit("ADD_CONTACT", {
+        name: this.name,
+        surname: this.surname,
+        phone: this.phone,
+        email: this.email,
+      });
+      const form = document.querySelector(".addContactForm-wraper");
+      form.style.left = "-100%";
+      setTimeout(() => {
+        this.name = "";
+        this.surname = "";
+        this.phone = "";
+        this.email = "";
+      }, 500);
     },
-    confirm(e) {
-      if (e.target.dataset.conf_value === 'yes') {
-        return true
-      } else {
-        const foo = document.querySelector('.confirm_popUp_wraper')
-        foo.style.top = '-100%'
-        foo.style.width = '0'
-        foo.style.height = '0'
-      }
+    closeForm() {
+      const form = document.querySelector(".addContactForm-wraper");
+      form.style.left = "-100%";
     },
   },
-}
+};
 </script>
 
 <style scoped lang="scss">
 .addContactForm-wraper {
-  margin: 30px auto;
-  .confirm_popUp_wraper {
-    position: absolute;
-    top: -100%;
-    width: 0;
-    height: 0;
-    background: rgba(227, 227, 227, 0.5);
-    z-index: 590;
-    transition: 0.5s;
-    .confirm_popUp {
-      position: relative;
-      top: 50%;
-      max-width: 560px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin: 0 auto;
-      padding: 30px 40px;
-      font-size: 18px;
-      background-color: white;
-      border-radius: 25px;
-      &-buttons {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin: 25px auto;
-      }
-      &-btn {
-        width: 135px;
-        margin: 0 25px;
-        padding: 10px 15px;
-        background: #1d7373;
-        border: 1px solid transparent;
-        border-radius: 25px;
-        color: white;
-        font-size: 18px;
-        cursor: pointer;
-        transition: 0.3s;
-        &:hover {
-          background: transparent;
-          border: 1px solid #1d7373;
-          color: black;
-        }
-      }
-    }
-  }
+  position: absolute;
+  left: -100%;
+  max-width: 235px;
+  margin: 0;
+  transition: 0.3s;
+  background: transparent;
   .addContactForm {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    max-width: 50vw;
+    align-items: flex-end;
+    max-width: 100%;
     padding: 20px;
-    margin: 20px auto;
+    margin: 0 auto;
+    background-color: white;
     box-shadow: 0px 0px 20px 0px rgba(133, 133, 133, 1);
-    border-radius: 20px;
+    border-radius: 25px;
     &_add-field {
       padding: 15px 20px;
       border-radius: 15px;
@@ -173,7 +124,7 @@ export default {
       text-align: left;
     }
     &_inputField {
-      max-width: 100%;
+      max-width: 80%;
       margin: 0 auto 0 0;
       padding: 15px 25px;
       border: 1px solid #33cccc;
@@ -192,8 +143,9 @@ export default {
       margin: 15px auto;
     }
     &_submit {
-      width: 235px;
-      padding: 15px 35px;
+      width: 70%;
+      margin: 0 auto;
+      padding: 10px 25px;
       background: #1d7373;
       border: 1px solid transparent;
       border-radius: 25px;
@@ -205,6 +157,34 @@ export default {
         background: transparent;
         border: 1px solid #1d7373;
         color: black;
+      }
+    }
+    .form_close {
+      display: flex;
+      width: 30px;
+      height: 30px;
+
+      &-btn {
+        width: 100%;
+        height: 100%;
+        padding: 0;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        &::after,
+        &::before {
+          content: "";
+          display: block;
+          width: 100%;
+          height: 2px;
+          background-color: #33cccc;
+        }
+        &::after {
+          transform: rotate(45deg);
+        }
+        &::before {
+          transform: rotate(-45deg) translateX(-2px);
+        }
       }
     }
   }

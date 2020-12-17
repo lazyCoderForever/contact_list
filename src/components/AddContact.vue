@@ -7,11 +7,6 @@
 <script>
 export default {
   name: "AddContact",
-  computed: {
-    ...mapState({
-      framesCount: "contacts"
-    })
-  }
 };
 </script>
 

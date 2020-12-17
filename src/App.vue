@@ -5,7 +5,7 @@
 </template>
 
 <style lang="scss">
-@import '@/scss/reset';
+@import "@/assets/scss/reset";
 * {
   box-sizing: border-box;
 }

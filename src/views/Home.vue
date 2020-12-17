@@ -9,17 +9,17 @@
 </template>
 
 <script>
-import Header from '@/components/Header.vue'
-import ContactsList from '@/components/ContactsList.vue'
-import AddContactForm from '@/components/Forms/AddContactForm.vue'
+import Header from "@/components/Header.vue";
+import ContactsList from "@/components/ContactsList.vue";
+import AddContactForm from "@/components/Forms/AddContactForm.vue";
 export default {
-  name: 'Home',
+  name: "Home",
   components: {
     ContactsList,
     Header,
-    AddContactForm,
-  },
-}
+    AddContactForm
+  }
+};
 </script>
 
 <style scoped lang="scss">
