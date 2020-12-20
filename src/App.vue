@@ -23,4 +23,15 @@
 a {
   text-decoration: none;
 }
+
+@media screen and (max-width: 1024px) {
+  .hideOnMediumScreen {
+    display: none;
+  }
+}
+@media screen and (max-width: 425px) {
+  .hideOnSmallScreen {
+    display: none;
+  }
+}
 </style>

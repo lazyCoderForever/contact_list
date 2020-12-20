@@ -8,8 +8,8 @@
       <div class="contacts_table-header">
         <div class="contacts_table-header-name">Name</div>
         <div class="contacts_table-header-surname">Surname</div>
-        <div class="contacts_table-header-phone">Phone</div>
-        <div class="contacts_table-header-email">Email</div>
+        <div class="contacts_table-header-phone hideOnSmallScreen">Phone</div>
+        <div class="contacts_table-header-email hideOnMediumScreen">Email</div>
       </div>
       <div
         v-for="contact in this.contacts"
@@ -20,8 +20,12 @@
         <button class="contact-del" v-on:click="delContact"></button>
         <div class="contact_table-name">{{ contact.name }}</div>
         <div class="contact_table-surname">{{ contact.surname }}</div>
-        <div class="contact_table-phone">{{ contact.phone }}</div>
-        <div class="contact_table-email">{{ contact.email }}</div>
+        <div class="contact_table-phone hideOnSmallScreen">
+          {{ contact.phone }}
+        </div>
+        <div class="contact_table-email hideOnMediumScreen">
+          {{ contact.email }}
+        </div>
         <div class="contact_table-detail">
           <router-link :to="`/contact/${contact._id}`">Detail</router-link>
         </div>
@@ -31,7 +35,6 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
 import { toggleForm } from "@/assets/js/toggleForm";
 import ConfirmPopUp from "@/components/ConfirmPopUp.vue";
 export default {
@@ -43,9 +46,9 @@ export default {
     };
   },
   computed: {
-    ...mapState({
-      contacts: "contacts",
-    }),
+    contacts: function() {
+      return this.$store.getters.getAllContacts;
+    },
   },
   methods: {
     confirm(e) {
@@ -55,7 +58,6 @@ export default {
         this.$store.commit("DEL_CONTACT", {
           contactId: this.contactToDelete,
         });
-        console.log(this.contactToDelete);
         Form.close();
       } else {
         Form.close();
@@ -72,15 +74,15 @@ export default {
     },
     addContact() {
       const form = document.querySelector(".addContactForm-wraper");
-      let windowWidth = Number(window.innerWidth) / 2 - 137;
-      form.style.left = `${windowWidth}px`;
+      let margin = Number(form.offsetWidth / 2);
+      form.style.left = `50%`;
       form.style.top = "30%";
+      form.style.marginLeft = `-${margin}px`;
     },
   },
 };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 .contacts-wraper {
   max-width: 90%;
@@ -148,6 +150,7 @@ export default {
       position: relative;
       display: grid;
       grid-template-columns: 150px 150px 200px 250px 250px;
+      align-items: center;
       padding: 20px 0;
       border-bottom: 1px solid #33cccc;
       transition: 0.3s;
@@ -178,6 +181,9 @@ export default {
       &_table-surname {
         text-align: center;
       }
+      &_table-phone {
+        line-height: 20px;
+      }
       &_table-detail {
         a {
           padding: 15px 30px;
@@ -190,6 +196,55 @@ export default {
             background: transparent;
             border: 1px solid #1d7373;
           }
+        }
+      }
+    }
+  }
+}
+@media screen and (max-width: 1024px) {
+  .contacts-wraper {
+    max-width: 95%;
+    .contacts_table {
+      padding: 10px 20px;
+      &-header {
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+      }
+      .contact {
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+        &-del {
+          left: 10px;
+        }
+        &_table-detail {
+          a {
+            padding: 10px 15px;
+          }
+        }
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 620px) {
+  .contacts-wraper {
+    .contacts_table {
+      .contact {
+        &-del {
+          left: 0px;
+        }
+      }
+    }
+  }
+}
+@media screen and (max-width: 425px) {
+  .contacts-wraper {
+    .contacts_table {
+      &-header {
+        grid-template-columns: 1fr 1fr 1fr;
+      }
+      .contact {
+        grid-template-columns: 1fr 1fr 1fr;
+        &-del {
+          left: -20px;
         }
       }
     }

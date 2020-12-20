@@ -114,6 +114,7 @@
 
 <script>
 import { toggleForm } from "@/assets/js/toggleForm";
+import { sort } from "@/assets/js/sort";
 import ConfirmPopUp from "@/components/ConfirmPopUp.vue";
 import AddFieldForm from "@/components/Forms/AddFieldForm.vue";
 export default {
@@ -142,19 +143,8 @@ export default {
     },
     sortedContactData: function() {
       let keys = Object.keys(this.contactData);
-      keys.sort(function(a, b) {
-        if (a.toLowerCase().indexOf("name") >= 0) {
-          if (b.toLowerCase().indexOf("name") === 0) {
-            return 1;
-          } else {
-            return -1;
-          }
-        }
-        if (b.toLowerCase().indexOf("name") >= 0) {
-          return 1;
-        }
-        return 0;
-      });
+      const sorting = sort(keys);
+      sorting.sortForDetailPapge();
       let sortedKeys = keys.map(el => {
         return { [el]: this.contactData[el] };
       });
@@ -220,7 +210,9 @@ export default {
     },
     openAddFieldForm() {
       const addFieldForm = document.querySelector(".addFieldForm");
-      addFieldForm.style.left = `-20%`;
+      const margin = Number(addFieldForm.offsetWidth / 2);
+      addFieldForm.style.left = `50%`;
+      addFieldForm.style.marginLeft = `-${margin}px`;
     },
     deleteField(e) {
       const confirmForm = document.querySelector(".contact-confirm-del");
@@ -269,13 +261,7 @@ export default {
     margin: 20px auto;
     box-shadow: 0px 0px 20px 0px rgba(133, 133, 133, 1);
     border-radius: 20px;
-    &_del {
-      &-info {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-    }
+
     &_deleteField {
       position: relative;
       display: block;
@@ -336,12 +322,11 @@ export default {
         background-image: url("../../assets/img/plus.png");
       }
     }
-    &_del {
-      width: 400px;
-      display: grid;
-      grid-template-columns: 100px -webkit-max-content;
-      grid-template-columns: 100px max-content;
-      align-items: center;
+
+    &_edit {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
       margin: 15px auto;
       &_options {
         display: flex;
@@ -366,11 +351,17 @@ export default {
         }
       }
     }
-    &_edit {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
+    &_del {
+      width: 400px;
+      display: grid;
+      grid-template-columns: 100px max-content;
+      align-items: center;
       margin: 15px auto;
+      &-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
       &_options {
         display: flex;
         justify-content: space-around;
@@ -407,7 +398,7 @@ export default {
 
     &_inputlabel {
       margin: 10px 0;
-      font-size: 18px;
+      font-size: 20px;
       font-weight: 500;
       text-align: left;
       color: black;
@@ -428,6 +419,61 @@ export default {
         display: flex;
         justify-content: space-around;
         align-items: center;
+      }
+    }
+  }
+}
+@media screen and (max-width: 1024px) {
+  .contactForm-wraper {
+    .contactForm {
+      max-width: 90vw;
+      &_options {
+        margin: 10px 0;
+        &_view,
+        &_stepBack,
+        &_stepBack_active,
+        &_edit-field,
+        &_del-field,
+        &_add-field {
+          width: 25px;
+          height: 25px;
+          margin: 0 10px;
+        }
+      }
+      &_edit {
+        &_options {
+          &-btn {
+            padding: 10px 20px;
+          }
+        }
+      }
+      &_deleteField {
+        margin: 0 auto 0 10px;
+      }
+      &_del {
+        width: 100%;
+        grid-template-columns: 1fr;
+        margin: 10px auto 10px 20px;
+      }
+      &_static {
+        width: 100%;
+        grid-template-columns: 1fr;
+        margin: 10px auto 10px 20px;
+      }
+    }
+  }
+}
+@media screen and (max-width: 425px) {
+  .contactForm-wraper {
+    .contactForm {
+      &_edit {
+        &_options {
+          flex-direction: column-reverse;
+          &-btn {
+            margin: 20px auto;
+            padding: 10px 50px;
+          }
+        }
       }
     }
   }
