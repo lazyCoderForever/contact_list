@@ -62,13 +62,13 @@ export default {
   },
   methods: {
     onSubmit() {
+      const form = document.querySelector(".addContactForm-wraper");
       this.$store.commit("ADD_CONTACT", {
         name: this.name,
         surname: this.surname,
         phone: this.phone,
         email: this.email,
       });
-      const form = document.querySelector(".addContactForm-wraper");
       form.style.left = "-100%";
       setTimeout(() => {
         this.name = "";

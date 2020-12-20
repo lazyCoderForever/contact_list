@@ -1,7 +1,7 @@
 <template>
   <div class="contactForm-wraper">
     <form class="contactForm">
-      <div v-if="change !== 'edit'" class="contactForm_options">
+      <div v-if="mode !== 'edit'" class="contactForm_options">
         <button
           v-if="lastAction.actionType"
           type="button"
@@ -22,21 +22,21 @@
         <button
           type="button"
           class=" contactForm_options_add-field"
-          v-if="change === 'static'"
+          v-if="mode === 'static'"
           v-on:click="openAddFieldForm"
         ></button>
         <button
           type="button"
           class=" contactForm_options_edit-field"
           data-form_option="edit"
-          v-if="change !== 'edit'"
+          v-if="mode !== 'edit'"
           v-on:click="allowChangeData"
         ></button>
         <button
           type="button"
           class=" contactForm_options_del-field"
           data-form_option="del"
-          v-if="change !== 'del'"
+          v-if="mode !== 'del'"
           v-on:click="allowChangeData"
         ></button>
       </div>
@@ -45,18 +45,18 @@
         v-for="(field, name, index) in sortedContactData"
         :key="index"
         v-bind:class="{
-          contactForm_static: change === 'static',
-          contactForm_edit: change === 'edit',
-          contactForm_del: change === 'del',
+          contactForm_static: mode === 'static',
+          contactForm_edit: mode === 'edit',
+          contactForm_del: mode === 'del',
         }"
       >
         <label class="contactForm_inputlabel" :for="index">{{
           `${Object.keys(field)[0]}:`
         }}</label>
-        <div v-if="change === 'static'" class="contactForm_info">
+        <div v-if="mode === 'static'" class="contactForm_info">
           {{ field[Object.keys(field)[0]] }}
         </div>
-        <div v-if="change === 'del'" class="contactForm_del-info">
+        <div v-if="mode === 'del'" class="contactForm_del-info">
           {{ field[Object.keys(field)[0]] }}
           <span
             class="contactForm_deleteField minus"
@@ -64,7 +64,7 @@
             v-on:click="deleteField"
           ></span>
         </div>
-        <div v-if="change === 'edit'" class="contactForm_inputField-wraper">
+        <div v-if="mode === 'edit'" class="contactForm_inputField-wraper">
           <input
             class="contactForm_inputField"
             type="text"
@@ -75,7 +75,7 @@
           />
         </div>
       </div>
-      <div class="contactForm_edit_options" v-if="change === 'edit'">
+      <div class="contactForm_edit_options" v-if="mode === 'edit'">
         <button
           type="button"
           class="contactForm_edit_options-btn"
@@ -134,7 +134,7 @@ export default {
       },
       fieldToDelete: "",
       fieldToDeleteValue: "",
-      change: "static",
+      mode: "static",
     };
   },
   computed: {
@@ -171,7 +171,7 @@ export default {
       if (e.target.dataset.conf_value === "yes") {
         Form.close();
         this.changedContactData = {};
-        this.change = "static";
+        this.mode = "static";
       } else {
         Form.close();
       }
@@ -189,7 +189,7 @@ export default {
         });
 
         this.changedContactData = {};
-        this.change = "static";
+        this.mode = "static";
       } else {
         const confirmСancellationForm = document.querySelector(
           ".contact-confirm-change"
@@ -206,7 +206,7 @@ export default {
     },
     allowChangeData(e) {
       const optionType = e.target.dataset.form_option;
-      this.change = optionType;
+      this.mode = optionType;
     },
     openAddFieldForm() {
       const addFieldForm = document.querySelector(".addFieldForm");

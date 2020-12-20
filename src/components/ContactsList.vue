@@ -1,6 +1,6 @@
 <template>
   <div class="contacts-wraper">
-    <button class="contacts_addContact" v-on:click="addContact">
+    <button class="contacts_addContact" v-on:click="openAddContactForm">
       Add new contact
     </button>
     <ConfirmPopUp :confirm="confirm" popUpText="Delete this contact ?" />
@@ -72,7 +72,7 @@ export default {
 
       Form.open("full-screen");
     },
-    addContact() {
+    openAddContactForm() {
       const form = document.querySelector(".addContactForm-wraper");
       let margin = Number(form.offsetWidth / 2);
       form.style.left = `50%`;
