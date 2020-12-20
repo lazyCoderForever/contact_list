@@ -6,6 +6,10 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
+    lastAction: {
+      actionType: "",
+      actionData: {},
+    },
     contacts: [
       {
         _id: "1",
@@ -59,6 +63,9 @@ export default new Vuex.Store({
     ],
   },
   getters: {
+    getLastAction: state => {
+      return state.lastAction;
+    },
     getContact: state => contactId => {
       let returnData = {};
       let contact = state.contacts.find(contact => {
@@ -70,6 +77,42 @@ export default new Vuex.Store({
     },
   },
   mutations: {
+    STEP_BACK(state, { contactId, lastAction }) {
+      const defaultState = {
+        actionType: "",
+        actionData: {},
+      };
+      const { actionType, actionData } = lastAction;
+      let contactFromState = state.contacts.find(contact => {
+        return contact._id === contactId;
+      });
+      //ACTION_EDIT,ACTION_DEL,ACTION_ADD
+      switch (actionType) {
+        case "ACTION_EDIT": {
+          let actionDataKeys = Object.keys(actionData.prevData);
+          actionDataKeys.forEach(key => {
+            Vue.set(contactFromState, key, actionData.prevData[key]);
+          });
+          state.lastAction = { ...defaultState };
+          break;
+        }
+        case "ACTION_DEL": {
+          const { fieldToDelete, fieldValue } = actionData;
+          Vue.set(contactFromState, fieldToDelete, fieldValue);
+          state.lastAction = { ...defaultState };
+          break;
+        }
+        case "ACTION_ADD": {
+          const { fieldName } = actionData;
+          Vue.delete(contactFromState, fieldName);
+          state.lastAction = { ...defaultState };
+          break;
+        }
+      }
+    },
+    SET_LAST_ACTION(state, { actionType, actionData }) {
+      state.lastAction = { ...state.lastAction, ...{ actionType, actionData } };
+    },
     SET_NEW_CONTACT_DATA(state, { contactId, changedContactData }) {
       const changedContactDataKeys = Object.keys(changedContactData);
       let contactFromState = state.contacts.find(contact => {

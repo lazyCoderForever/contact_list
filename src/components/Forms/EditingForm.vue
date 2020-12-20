@@ -3,6 +3,17 @@
     <form class="contactForm">
       <div v-if="change !== 'edit'" class="contactForm_options">
         <button
+          v-if="lastAction.actionType"
+          type="button"
+          class="contactForm_options_stepBack_active"
+          v-on:click="stepBack"
+        ></button>
+        <button
+          v-else-if="!lastAction.actionType"
+          type="button"
+          class="contactForm_options_stepBack"
+        ></button>
+        <button
           type="button"
           class="contactForm_options_view"
           data-form_option="static"
@@ -82,7 +93,11 @@
           Save
         </button>
       </div>
-      <AddFieldForm :contactId="contactId" :contactData="contactData" />
+      <AddFieldForm
+        :contactId="contactId"
+        :contactData="contactData"
+        :setLastAction="setLastAction"
+      />
       <ConfirmPopUp
         :confirm="confirm"
         :withField="fieldToDelete"
@@ -117,10 +132,14 @@ export default {
         fielValue: "",
       },
       fieldToDelete: "",
+      fieldToDeleteValue: "",
       change: "static",
     };
   },
   computed: {
+    lastAction: function() {
+      return this.$store.getters.getLastAction;
+    },
     sortedContactData: function() {
       let keys = Object.keys(this.contactData);
       keys.sort(function(a, b) {
@@ -144,6 +163,18 @@ export default {
   },
 
   methods: {
+    stepBack() {
+      this.$store.commit("STEP_BACK", {
+        contactId: this.contactId,
+        lastAction: this.lastAction,
+      });
+    },
+    setLastAction(actionType, actionData) {
+      this.$store.commit("SET_LAST_ACTION", {
+        actionType: actionType,
+        actionData: actionData,
+      });
+    },
     confirmСancellation(e) {
       const confirmForm = document.querySelector(".contact-confirm-change");
       const Form = toggleForm(confirmForm);
@@ -159,10 +190,14 @@ export default {
       const clickedButton = e.target;
       const clickedButtonDataSet = clickedButton.dataset.set;
       if (clickedButtonDataSet === "save") {
+        this.setLastAction("ACTION_EDIT", {
+          prevData: this.contactData,
+        });
         this.$store.commit("SET_NEW_CONTACT_DATA", {
           contactId: this.contactId,
           changedContactData: this.changedContactData,
         });
+
         this.changedContactData = {};
         this.change = "static";
       } else {
@@ -181,11 +216,6 @@ export default {
     },
     allowChangeData(e) {
       const optionType = e.target.dataset.form_option;
-
-      //      this.$store.commit("SAVE_PREV_DATA", {
-      //   contactId: this.contactId,
-      //   prevData: this.contactData,
-      // });
       this.change = optionType;
     },
     openAddFieldForm() {
@@ -195,9 +225,9 @@ export default {
     deleteField(e) {
       const confirmForm = document.querySelector(".contact-confirm-del");
       const Form = toggleForm(confirmForm);
-      let nameField = e.target.dataset.name_field;
+      let fieldName = e.target.dataset.name_field;
 
-      this.fieldToDelete = nameField;
+      this.fieldToDelete = fieldName;
       Form.open("contain");
     },
     confirm(e) {
@@ -206,6 +236,10 @@ export default {
       if (e.target.dataset.conf_value === "yes") {
         this.$store.commit("DEL_FIELD", {
           contactId: this.contactId,
+          fieldToDelete: this.fieldToDelete,
+        });
+        this.setLastAction("ACTION_DEL", {
+          fieldValue: this.contactData[this.fieldToDelete],
           fieldToDelete: this.fieldToDelete,
         });
         Form.close();
@@ -265,6 +299,8 @@ export default {
     }
     &_options {
       &_view,
+      &_stepBack,
+      &_stepBack_active,
       &_edit-field,
       &_del-field,
       &_add-field {
@@ -277,6 +313,15 @@ export default {
         background-repeat: no-repeat;
         background-color: transparent;
         cursor: pointer;
+      }
+      &_stepBack_active {
+        background-image: url("../../assets/img/back.png");
+        cursor: pointer;
+      }
+      &_stepBack {
+        filter: grayscale(1);
+        background-image: url("../../assets/img/back.png");
+        cursor: default;
       }
       &_view {
         background-image: url("../../assets/img/eye.png");

@@ -15,7 +15,7 @@
           placeholder="Phone-2"
           v-model.trim="fieldName"
         />
-        <span class="error-alert">Field with this name already exist</span>
+        <span class="error-alert">{{ this.error }}</span>
       </div>
       <div class="addFieldForm_field-container">
         <label for="field_value" class="addFieldForm_label">Field value</label>
@@ -38,28 +38,41 @@ export default {
   props: {
     contactId: String,
     contactData: Object,
+    setLastAction: Function,
   },
   data: () => {
     return {
       fieldName: "",
       fieldValue: "",
+      error: "",
     };
   },
   methods: {
+    displayError() {
+      const alert = document.querySelector(".error-alert");
+      alert.style.display = "block";
+      setTimeout(() => {
+        alert.style.display = "none";
+      }, 3000);
+    },
     addField() {
       if (
         Object.prototype.hasOwnProperty.call(this.contactData, this.fieldName)
       ) {
-        const alert = document.querySelector(".error-alert");
-        alert.style.display = "block";
-        setTimeout(() => {
-          alert.style.display = "none";
-        }, 3000);
+        this.error = "Field with this name already exist";
+        this.displayError();
+      } else if (!this.fieldName) {
+        this.error = "Field  name requires";
+
+        this.displayError();
       } else {
         this.$store.commit("ADD_FIELD", {
           contactId: this.contactId,
           fieldName: this.fieldName,
           fieldValue: this.fieldValue,
+        });
+        this.setLastAction("ACTION_ADD", {
+          fieldName: this.fieldName,
         });
       }
     },
