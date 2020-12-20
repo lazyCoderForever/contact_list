@@ -30,8 +30,8 @@ export default {
     confirm: Function,
     withField: String,
     popUpText: String,
-    additionalClass: String,
-  },
+    additionalClass: String
+  }
 };
 </script>
 

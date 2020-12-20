@@ -47,7 +47,7 @@
         v-bind:class="{
           contactForm_static: mode === 'static',
           contactForm_edit: mode === 'edit',
-          contactForm_del: mode === 'del',
+          contactForm_del: mode === 'del'
         }"
       >
         <label class="contactForm_inputlabel" :for="index">{{
@@ -122,7 +122,7 @@ export default {
   name: "EditingForm",
   props: {
     contactData: Object,
-    contactId: String,
+    contactId: String
   },
   data: () => {
     return {
@@ -130,11 +130,11 @@ export default {
       userLastAction: {
         changeName: "",
         fieldName: "",
-        fielValue: "",
+        fielValue: ""
       },
       fieldToDelete: "",
       fieldToDeleteValue: "",
-      mode: "static",
+      mode: "static"
     };
   },
   computed: {
@@ -149,20 +149,20 @@ export default {
         return { [el]: this.contactData[el] };
       });
       return sortedKeys;
-    },
+    }
   },
 
   methods: {
     stepBack() {
       this.$store.commit("STEP_BACK", {
         contactId: this.contactId,
-        lastAction: this.lastAction,
+        lastAction: this.lastAction
       });
     },
     setLastAction(actionType, actionData) {
       this.$store.commit("SET_LAST_ACTION", {
         actionType: actionType,
-        actionData: actionData,
+        actionData: actionData
       });
     },
     confirmСancellation(e) {
@@ -181,11 +181,11 @@ export default {
       const clickedButtonDataSet = clickedButton.dataset.set;
       if (clickedButtonDataSet === "save") {
         this.setLastAction("ACTION_EDIT", {
-          prevData: this.contactData,
+          prevData: this.contactData
         });
         this.$store.commit("SET_NEW_CONTACT_DATA", {
           contactId: this.contactId,
-          changedContactData: this.changedContactData,
+          changedContactData: this.changedContactData
         });
 
         this.changedContactData = {};
@@ -228,18 +228,18 @@ export default {
       if (e.target.dataset.conf_value === "yes") {
         this.$store.commit("DEL_FIELD", {
           contactId: this.contactId,
-          fieldToDelete: this.fieldToDelete,
+          fieldToDelete: this.fieldToDelete
         });
         this.setLastAction("ACTION_DEL", {
           fieldValue: this.contactData[this.fieldToDelete],
-          fieldToDelete: this.fieldToDelete,
+          fieldToDelete: this.fieldToDelete
         });
         Form.close();
       } else {
         Form.close();
       }
-    },
-  },
+    }
+  }
 };
 </script>
 

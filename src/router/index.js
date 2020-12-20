@@ -1,6 +1,7 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import Home from "../views/Home.vue";
+import Home from "@/views/Home.vue";
+import NotFound from "@/views/NotFound.vue";
 
 Vue.use(VueRouter);
 
@@ -15,7 +16,8 @@ const routes = [
     name: "Contact",
     props: true,
     component: () => import("../views/ContactDetail.vue")
-  }
+  },
+  { path: "*", component: NotFound }
 ];
 
 const router = new VueRouter({

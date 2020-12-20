@@ -13,7 +13,7 @@ export default {
   name: "ContactDetail",
   components: {
     EditingForm,
-    Header,
+    Header
   },
   props: ["id"],
   computed: {
@@ -22,7 +22,7 @@ export default {
     },
     contact() {
       return this.$store.getters.getContact(this.contactId);
-    },
-  },
+    }
+  }
 };
 </script>

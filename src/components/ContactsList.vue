@@ -42,13 +42,13 @@ export default {
   name: "ContactsList",
   data: () => {
     return {
-      contactToDelete: "",
+      contactToDelete: ""
     };
   },
   computed: {
     contacts: function() {
       return this.$store.getters.getAllContacts;
-    },
+    }
   },
   methods: {
     confirm(e) {
@@ -56,7 +56,7 @@ export default {
       const Form = toggleForm(confirmForm);
       if (e.target.dataset.conf_value === "yes") {
         this.$store.commit("DEL_CONTACT", {
-          contactId: this.contactToDelete,
+          contactId: this.contactToDelete
         });
         Form.close();
       } else {
@@ -78,8 +78,8 @@ export default {
       form.style.left = `50%`;
       form.style.top = "30%";
       form.style.marginLeft = `-${margin}px`;
-    },
-  },
+    }
+  }
 };
 </script>
 

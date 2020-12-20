@@ -38,13 +38,13 @@ export default {
   props: {
     contactId: String,
     contactData: Object,
-    setLastAction: Function,
+    setLastAction: Function
   },
   data: () => {
     return {
       fieldName: "",
       fieldValue: "",
-      error: "",
+      error: ""
     };
   },
   methods: {
@@ -69,18 +69,18 @@ export default {
         this.$store.commit("ADD_FIELD", {
           contactId: this.contactId,
           fieldName: this.fieldName,
-          fieldValue: this.fieldValue,
+          fieldValue: this.fieldValue
         });
         this.setLastAction("ACTION_ADD", {
-          fieldName: this.fieldName,
+          fieldName: this.fieldName
         });
       }
     },
     closeForm(e) {
       const form = e.target.parentNode;
       form.style.left = "-200%";
-    },
-  },
+    }
+  }
 };
 </script>
 

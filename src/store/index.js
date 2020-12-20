@@ -8,7 +8,7 @@ export default new Vuex.Store({
   state: {
     lastAction: {
       actionType: "",
-      actionData: {},
+      actionData: {}
     },
     contacts: [
       {
@@ -16,51 +16,51 @@ export default new Vuex.Store({
         name: "Руденко",
         surname: "Северал",
         phone: "338 (529) 134-92-25",
-        email: "Hurew1978@deyrep.com",
+        email: "Hurew1978@deyrep.com"
       },
       {
         _id: "2",
         name: "Остимчук ",
         surname: "Арнгольд",
         phone: "9 (376) 300-96-26",
-        email: "Fainsirly1962@weleworm.com",
+        email: "Fainsirly1962@weleworm.com"
       },
       {
         _id: "3",
         name: "Осипова ",
         surname: "Хармони",
         phone: "87 (397) 427-46-86",
-        email: "Cogried63@rgyat.com",
+        email: "Cogried63@rgyat.com"
       },
       {
         _id: "34",
         name: "Егоров ",
         surname: "Адалат",
         phone: "+7 (951) 212-36-34",
-        email: "Cogried63@rgyat.com",
+        email: "Cogried63@rgyat.com"
       },
       {
         _id: "35",
         name: "Ермилов ",
         surname: "Иеремий",
         phone: "+7 (972) 585-73-31",
-        email: "Cogried63@rgyat.com",
+        email: "Cogried63@rgyat.com"
       },
       {
         _id: "36",
         name: "Вещая ",
         surname: "Андозия",
         phone: "+7 (985) 829-05-39",
-        email: "Cogried63@rgyat.com",
+        email: "Cogried63@rgyat.com"
       },
       {
         _id: "37",
         name: "Верховская ",
         surname: "Чина",
         phone: "+7 (930) 275-38-88",
-        email: "ChinaVerhovskaya366@rgyat.com",
-      },
-    ],
+        email: "ChinaVerhovskaya366@rgyat.com"
+      }
+    ]
   },
   getters: {
     getLastAction: state => {
@@ -77,13 +77,13 @@ export default new Vuex.Store({
     },
     getAllContacts: state => {
       return state.contacts;
-    },
+    }
   },
   mutations: {
     STEP_BACK(state, { contactId, lastAction }) {
       const defaultState = {
         actionType: "",
-        actionData: {},
+        actionData: {}
       };
       const { actionType, actionData } = lastAction;
       let contactFromState = state.contacts.find(contact => {
@@ -158,10 +158,10 @@ export default new Vuex.Store({
         name,
         surname,
         phone,
-        email,
+        email
       };
       state.contacts.push(newContact);
-    },
+    }
   },
-  actions: {},
+  actions: {}
 });

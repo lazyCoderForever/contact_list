@@ -57,7 +57,7 @@ export default {
       name: "",
       surname: "",
       phone: "",
-      email: "",
+      email: ""
     };
   },
   methods: {
@@ -67,7 +67,7 @@ export default {
         name: this.name,
         surname: this.surname,
         phone: this.phone,
-        email: this.email,
+        email: this.email
       });
       form.style.left = "-100%";
       setTimeout(() => {
@@ -80,8 +80,8 @@ export default {
     closeForm() {
       const form = document.querySelector(".addContactForm-wraper");
       form.style.left = "-100%";
-    },
-  },
+    }
+  }
 };
 </script>
 

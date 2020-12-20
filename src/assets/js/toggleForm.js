@@ -28,7 +28,7 @@ const toggleForm = function(form) {
       form.style.transform = "scale(0)";
       form.style.width = "0";
       form.style.height = "0";
-    },
+    }
   };
 };
 

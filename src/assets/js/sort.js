@@ -14,7 +14,7 @@ const sort = function(arrForSort) {
         }
         return 0;
       });
-    },
+    }
   };
 };
 
